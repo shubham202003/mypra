@@ -1,0 +1,85 @@
+a1
+Design and implement
+
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+
+
+
+# Load Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+iris
+
+
+
+
+# Standardize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+iris
+
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+
+
+
+# Train Random Forest Classifier
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
+
+
+
+
+
+y_pred = clf.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+
+
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+
+
+
+
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+sns.heatmap(conf_matrix, annot=True, xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.title("Confusion Matrix")
+plt.show()
+
+
+
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+
+
+
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=iris.target_names[y], palette="deep", s=100)
+plt.title("PCA - Iris Dataset")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.show()

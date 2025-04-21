@@ -1,0 +1,50 @@
+a5
+Develop an anomaly 
+
+
+
+import pandas as pd
+import numpy as np
+from sklearn.datasets import fetch_kddcup99
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load dataset
+data = fetch_kddcup99(subset='SA', percent10=True, as_frame=True)
+df = data.frame.copy()
+
+# Step 2: Preprocessing
+# Encode categorical features (protocol_type, service, flag)
+
+
+# Step 3: Separate features and labels
+X = df.drop(columns='labels')
+y = df['labels'].apply(lambda x: 0 if x == b'normal.' else 1)
+
+  # 0: normal, 1: anomaly
+
+# Step 4: Feature scaling
+X_scaled = StandardScaler().fit_transform(X)
+
+# Step 5: Train Isolation Forest
+model = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
+model.fit(X_scaled)
+
+# Step 6: Predict (convert output to match label format)
+y_pred = model.predict(X_scaled)
+y_pred = np.where(y_pred == 1, 0, 1)  # 1 = anomaly, 0 = normal
+
+# Step 7: Evaluation
+print("Classification Report:\n", classification_report(y, y_pred))
+
+# Step 8: Confusion Matrix
+plt.figure(figsize=(6, 5))
+sns.heatmap(confusion_matrix(y, y_pred), annot=True, fmt='d', cmap='Blues')
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+plt.tight_layout()
+plt.show()

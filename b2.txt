@@ -1,0 +1,56 @@
+b2
+Build a Discrete Hidden 
+
+
+
+import numpy as np
+from hmmlearn.hmm import MultinomialHMM
+from sklearn.model_selection import train_test_split
+
+# Sample DNA sequences (A=0, C=1, G=2, T=3)
+sequences = [
+    "ATGCGTACG",  # Gene region (example)
+    "GCGTACGTG",  # Non-gene region (example)
+    "ATGCGTAC",   # Gene region (example)
+    "CGTACGTG",   # Non-gene region (example)
+    "ATCGGCTAG"   # Gene region (example)
+]
+
+# Labels for each sequence: 1 for gene region, 0 for non-gene region
+labels = [1, 0, 1, 0, 1]
+
+# Map DNA bases to integers: A=0, C=1, G=2, T=3
+base_to_int = {"A": 0, "C": 1, "G": 2, "T": 3}
+
+# Convert DNA sequences to integers
+def encode_sequence(seq):
+    return [base_to_int[base] for base in seq]
+
+# Encode each sequence in the dataset
+encoded_sequences = [encode_sequence(seq) for seq in sequences]
+
+# Flatten the sequences into individual samples for HMM (each nucleotide is treated as a sample)
+X_flattened = np.concatenate([seq for seq in encoded_sequences]).reshape(-1, 1)
+
+# Prepare the labels for the flattened data
+y_flattened = np.concatenate([np.full(len(seq), label) for seq, label in zip(encoded_sequences, labels)])
+
+# Split the flattened data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X_flattened, y_flattened, test_size=0.2, random_state=42)
+
+# Initialize MultinomialHMM
+hmm = MultinomialHMM(n_components=2, n_iter=100)
+
+# Fit the model on the training data
+hmm.fit(X_train)
+
+# Predict hidden states for the test set
+predicted_states = hmm.predict(X_test)
+
+# Accuracy: Compare predicted states with true labels
+accuracy = np.mean(predicted_states == y_test)
+print(f"Prediction accuracy: {accuracy:.2f}")
+
+# Print predicted vs actual labels for the test set
+for i, (pred, actual) in enumerate(zip(predicted_states, y_test)):
+    print(f"Test Sequence {i+1} - Predicted: {pred}, Actual: {actual}")

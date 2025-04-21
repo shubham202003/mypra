@@ -1,0 +1,40 @@
+b7
+Build a Python 
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+# Load Iris dataset
+iris = load_iris()
+X = iris.data[:, 2:4]  # Use only petal length and width for simplicity
+y = iris.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Test different values of K
+k_values = range(1, 11)
+accuracies = []
+
+for k in k_values:
+    model = KNeighborsClassifier(n_neighbors=k)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    accuracies.append(acc)
+    print(f"K={k} → Accuracy: {acc:.2f}")
+
+# Plot accuracy vs K
+plt.plot(k_values, accuracies, marker='o')
+plt.title("KNN Accuracy for Different K Values")
+plt.xlabel("Number of Neighbors (K)")
+plt.ylabel("Accuracy")
+plt.grid(True)
+plt.show()

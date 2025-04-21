@@ -1,0 +1,100 @@
+a3
+Design a statistical 
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score,confusion_matrix
+from sklearn.naive_bayes import GaussianNB
+
+
+
+
+
+# Step 2: Load Wine Quality Dataset from sklearn or use a CSV
+
+data = load_wine()
+
+df = pd.DataFrame(data=data.data, columns=data.feature_names)
+
+X = df
+y = data.target
+
+X.head()
+
+
+
+
+
+# Step 3: Split into training and testing
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+
+
+# Step 4: Train a Gaussian Naive Bayes model
+
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+
+
+
+
+# Step 5: Predict and evaluate
+
+y_pred = model.predict(X_test)
+
+print('Accuracy Score: ', accuracy_score(y_test, y_pred))
+print('Classification Report: ', classification_report(y_test, y_pred))
+
+
+
+
+
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Step 8: Plot confusion matrix
+plt.figure(figsize=(12, 10))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+            xticklabels=data.target_names, yticklabels=data.target_names)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Category")
+plt.ylabel("Actual Category")
+plt.xticks(rotation=90)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+from sklearn.mixture import GaussianMixture
+
+# Fit GMM assuming 6 quality levels
+gmm = GaussianMixture(n_components=6, random_state=42)
+gmm.fit(X)
+
+# Assign cluster labels
+df['GMM_Cluster'] = gmm.predict(X)
+
+# Visualize clusters
+sns.scatterplot(data=df, x=X.columns[0], y=X.columns[1], hue='GMM_Cluster', palette='Set2')
+plt.title("GMM Clusters of Wines")
+plt.show()
+
+
+
+
+
+
+
+

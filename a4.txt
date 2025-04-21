@@ -1,0 +1,42 @@
+a4
+Develop a classification
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+
+
+# Load MNIST
+X, y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
+y = y.astype(int)
+
+# Train/Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train & Predict
+model = GaussianNB()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# Accuracy & Classification Report
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# Show correct & incorrect predictions
+correct = np.where(y_test == y_pred)[0]
+incorrect = np.where(y_test != y_pred)[0]
+
+for title, indices in [("Correct", correct), ("Incorrect", incorrect)]:
+    plt.figure(figsize=(10, 3))
+    for i, idx in enumerate(indices[:10]):
+        plt.subplot(1, 10, i+1)
+        plt.imshow(X_test[idx].reshape(28, 28), cmap='gray')
+        plt.title(f"{y_pred[idx]}", fontsize=8)
+        plt.axis('off')
+    plt.suptitle(f"{title} Predictions")
+    plt.show()

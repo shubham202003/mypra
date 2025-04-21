@@ -1,0 +1,730 @@
+all
+
+
+a1
+Design and implement
+
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+
+
+
+# Load Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+iris
+
+
+
+
+# Standardize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+iris
+
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+
+
+
+# Train Random Forest Classifier
+clf = RandomForestClassifier(n_estimators=100, random_state=42)
+clf.fit(X_train, y_train)
+
+
+
+
+
+y_pred = clf.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+
+
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=iris.target_names))
+
+
+
+
+
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+sns.heatmap(conf_matrix, annot=True, xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.title("Confusion Matrix")
+plt.show()
+
+
+
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+
+
+
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=iris.target_names[y], palette="deep", s=100)
+plt.title("PCA - Iris Dataset")
+plt.xlabel("Principal Component 1")
+plt.ylabel("Principal Component 2")
+plt.show()
+
+
+
+
+
+a2
+Develop a text 
+
+
+
+# Step 1: Import necessary libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score,confusion_matrix
+
+
+
+
+
+# Step 2: Load the dataset
+
+data = fetch_20newsgroups(subset='all')
+X = data.data
+y = data.target
+
+
+
+
+# Step 3: Split into training and testing sets
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42)
+
+
+
+
+
+# Step 4: Create a pipeline (Vectorizer + Classifier)
+
+model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+
+
+
+
+
+# Step 5: Train the model
+
+model.fit(X_train, y_train)
+
+
+
+
+
+# Step 6: Make predictions on the test data
+
+y_pred = model.predict(X_test)
+
+
+
+
+
+# Step 7: Evaluate the model
+
+print('Accuracy: ', accuracy_score(y_test, y_pred))
+print("Classification Report; ", classification_report(y_test, y_pred, target_names=data.target_names))
+
+
+
+
+
+
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Step 8: Plot confusion matrix
+plt.figure(figsize=(12, 10))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+            xticklabels=data.target_names, yticklabels=data.target_names)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Category")
+plt.ylabel("Actual Category")
+plt.xticks(rotation=90)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+a3
+Design a statistical 
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_wine
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score,confusion_matrix
+from sklearn.naive_bayes import GaussianNB
+
+
+
+
+
+# Step 2: Load Wine Quality Dataset from sklearn or use a CSV
+
+data = load_wine()
+
+df = pd.DataFrame(data=data.data, columns=data.feature_names)
+
+X = df
+y = data.target
+
+X.head()
+
+
+
+
+
+# Step 3: Split into training and testing
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+
+
+# Step 4: Train a Gaussian Naive Bayes model
+
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+
+
+
+
+# Step 5: Predict and evaluate
+
+y_pred = model.predict(X_test)
+
+print('Accuracy Score: ', accuracy_score(y_test, y_pred))
+print('Classification Report: ', classification_report(y_test, y_pred))
+
+
+
+
+
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Step 8: Plot confusion matrix
+plt.figure(figsize=(12, 10))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+            xticklabels=data.target_names, yticklabels=data.target_names)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Category")
+plt.ylabel("Actual Category")
+plt.xticks(rotation=90)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+from sklearn.mixture import GaussianMixture
+
+# Fit GMM assuming 6 quality levels
+gmm = GaussianMixture(n_components=6, random_state=42)
+gmm.fit(X)
+
+# Assign cluster labels
+df['GMM_Cluster'] = gmm.predict(X)
+
+# Visualize clusters
+sns.scatterplot(data=df, x=X.columns[0], y=X.columns[1], hue='GMM_Cluster', palette='Set2')
+plt.title("GMM Clusters of Wines")
+plt.show()
+
+
+
+
+
+
+
+
+
+a4
+Develop a classification
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, classification_report
+
+
+# Load MNIST
+X, y = fetch_openml('mnist_784', version=1, return_X_y=True, as_frame=False)
+y = y.astype(int)
+
+# Train/Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train & Predict
+model = GaussianNB()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+# Accuracy & Classification Report
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+# Show correct & incorrect predictions
+correct = np.where(y_test == y_pred)[0]
+incorrect = np.where(y_test != y_pred)[0]
+
+for title, indices in [("Correct", correct), ("Incorrect", incorrect)]:
+    plt.figure(figsize=(10, 3))
+    for i, idx in enumerate(indices[:10]):
+        plt.subplot(1, 10, i+1)
+        plt.imshow(X_test[idx].reshape(28, 28), cmap='gray')
+        plt.title(f"{y_pred[idx]}", fontsize=8)
+        plt.axis('off')
+    plt.suptitle(f"{title} Predictions")
+    plt.show()
+
+
+
+
+
+
+a5
+Develop an anomaly 
+
+
+
+import pandas as pd
+import numpy as np
+from sklearn.datasets import fetch_kddcup99
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load dataset
+data = fetch_kddcup99(subset='SA', percent10=True, as_frame=True)
+df = data.frame.copy()
+
+# Step 2: Preprocessing
+# Encode categorical features (protocol_type, service, flag)
+
+
+# Step 3: Separate features and labels
+X = df.drop(columns='labels')
+y = df['labels'].apply(lambda x: 0 if x == b'normal.' else 1)
+
+  # 0: normal, 1: anomaly
+
+# Step 4: Feature scaling
+X_scaled = StandardScaler().fit_transform(X)
+
+# Step 5: Train Isolation Forest
+model = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
+model.fit(X_scaled)
+
+# Step 6: Predict (convert output to match label format)
+y_pred = model.predict(X_scaled)
+y_pred = np.where(y_pred == 1, 0, 1)  # 1 = anomaly, 0 = normal
+
+# Step 7: Evaluation
+print("Classification Report:\n", classification_report(y, y_pred))
+
+# Step 8: Confusion Matrix
+plt.figure(figsize=(6, 5))
+sns.heatmap(confusion_matrix(y, y_pred), annot=True, fmt='d', cmap='Blues')
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.title("Confusion Matrix")
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+b1
+Implement a Hidden
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from hmmlearn.hmm import CategoricalHMM, GaussianHMM
+from sklearn.preprocessing import KBinsDiscretizer
+
+# Define hidden states (Sunny, Cloudy, Rainy)
+states = ["Sunny", "Cloudy", "Rainy"]
+n_states = len(states)
+
+# Transition probabilities (assumed)
+trans_probs = np.array([[0.6, 0.3, 0.1], # Sunny → (Sunny, Cloudy, Rainy)
+[0.2, 0.5, 0.3], # Cloudy → (Sunny, Cloudy, Rainy)
+[0.1, 0.3, 0.6]]) # Rainy → (Sunny, Cloudy, Rainy)
+
+# Emission probabilities (Temperature, Humidity range)
+means = np.array([[30, 40], # Sunny (High Temp, Low Humidity)
+[25, 50], # Cloudy (Medium Temp, Medium Humidity)
+[20, 80]]) # Rainy (Low Temp, High Humidity)
+covars = np.array([[[5, 3], [3, 5]], # Sunny (Variance)
+[[4, 2], [2, 4]], # Cloudy
+[[3, 5], [5, 3]]]) # Rainy
+
+# Generate synthetic data
+n_samples = 300
+np.random.seed(42)
+hidden_states = np.random.choice(n_states, size=n_samples, p=[0.5, 0.3, 0.2])
+observations = np.array([np.random.multivariate_normal(means[s], covars[s]) for s in hidden_states])
+
+# Plot observations
+plt.scatter(observations[:, 0], observations[:, 1], c=hidden_states, cmap="viridis")
+plt.xlabel("Temperature")
+plt.ylabel("Humidity")
+plt.title("Weather Observations")
+plt.show()
+
+# Discretizing the observations into 5 bins
+discretizer = KBinsDiscretizer(n_bins=5, encode="ordinal", strategy="uniform")
+X_discrete = discretizer.fit_transform(observations).astype(int)
+
+# Reshape for HMM (hmmlearn requires 2D input)
+X_discrete = X_discrete[:, 0].reshape(-1, 1)
+
+# Train Discrete HMM (CategoricalHMM)
+hmm_discrete = CategoricalHMM(n_components=n_states, n_iter=100)
+hmm_discrete.fit(X_discrete)
+
+# Predict hidden states
+hidden_preds_discrete = hmm_discrete.predict(X_discrete)
+
+# Accuracy comparison
+accuracy_discrete = np.mean(hidden_preds_discrete == hidden_states)
+print(f"Discrete HMM Accuracy: {accuracy_discrete:.2f}")
+
+# Train Continuous HMM (GaussianHMM)
+hmm_continuous = GaussianHMM(n_components=n_states, covariance_type="full", n_iter=100)
+hmm_continuous.fit(observations)
+
+# Predict hidden states
+hidden_preds_continuous = hmm_continuous.predict(observations)
+
+# Accuracy comparison
+accuracy_continuous = np.mean(hidden_preds_continuous == hidden_states)
+print(f"Continuous HMM Accuracy: {accuracy_continuous:.2f}")
+
+# Plot comparison
+plt.figure(figsize=(10, 4))
+plt.plot(hidden_states[:50], "bo-", label="True States")
+plt.plot(hidden_preds_discrete[:50], "r--", label="Discrete HMM")
+plt.plot(hidden_preds_continuous[:50], "g.-", label="Continuous HMM")
+plt.legend()
+plt.xlabel("Time Step")
+plt.ylabel("State")
+plt.title("Comparison of True vs Predicted States")
+plt.show()
+
+
+
+
+b2
+Build a Discrete Hidden 
+
+
+
+import numpy as np
+from hmmlearn.hmm import MultinomialHMM
+from sklearn.model_selection import train_test_split
+
+# Sample DNA sequences (A=0, C=1, G=2, T=3)
+sequences = [
+    "ATGCGTACG",  # Gene region (example)
+    "GCGTACGTG",  # Non-gene region (example)
+    "ATGCGTAC",   # Gene region (example)
+    "CGTACGTG",   # Non-gene region (example)
+    "ATCGGCTAG"   # Gene region (example)
+]
+
+# Labels for each sequence: 1 for gene region, 0 for non-gene region
+labels = [1, 0, 1, 0, 1]
+
+# Map DNA bases to integers: A=0, C=1, G=2, T=3
+base_to_int = {"A": 0, "C": 1, "G": 2, "T": 3}
+
+# Convert DNA sequences to integers
+def encode_sequence(seq):
+    return [base_to_int[base] for base in seq]
+
+# Encode each sequence in the dataset
+encoded_sequences = [encode_sequence(seq) for seq in sequences]
+
+# Flatten the sequences into individual samples for HMM (each nucleotide is treated as a sample)
+X_flattened = np.concatenate([seq for seq in encoded_sequences]).reshape(-1, 1)
+
+# Prepare the labels for the flattened data
+y_flattened = np.concatenate([np.full(len(seq), label) for seq, label in zip(encoded_sequences, labels)])
+
+# Split the flattened data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X_flattened, y_flattened, test_size=0.2, random_state=42)
+
+# Initialize MultinomialHMM
+hmm = MultinomialHMM(n_components=2, n_iter=100)
+
+# Fit the model on the training data
+hmm.fit(X_train)
+
+# Predict hidden states for the test set
+predicted_states = hmm.predict(X_test)
+
+# Accuracy: Compare predicted states with true labels
+accuracy = np.mean(predicted_states == y_test)
+print(f"Prediction accuracy: {accuracy:.2f}")
+
+# Print predicted vs actual labels for the test set
+for i, (pred, actual) in enumerate(zip(predicted_states, y_test)):
+    print(f"Test Sequence {i+1} - Predicted: {pred}, Actual: {actual}")
+
+
+
+
+
+b4
+Create a program 
+
+
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.mixture import GaussianMixture
+from sklearn.datasets import fetch_openml
+from sklearn.decomposition import PCA
+
+# Load MNIST dataset
+print("Loading MNIST dataset...")
+mnist = fetch_openml("mnist_784", version=1)
+X = mnist.data.to_numpy().astype(np.float32) / 255.0  # Normalize pixel values
+y = mnist.target.astype(int)
+
+# Apply PCA for dimensionality reduction
+print("Applying PCA for dimensionality reduction...")
+pca = PCA(n_components=50)
+X_reduced = pca.fit_transform(X)
+
+# Fit Gaussian Mixture Model
+print("Fitting Gaussian Mixture Model...")
+num_clusters = 10  # We expect 10 clusters (digits 0-9)
+gmm = GaussianMixture(n_components=num_clusters, covariance_type="full", random_state=42)
+gmm.fit(X_reduced)
+
+# Predict clusters for each sample
+print("Predicting clusters...")
+clusters = gmm.predict(X_reduced)
+
+# Function to plot images from a specific cluster
+def plot_cluster_images(cluster_number, num_samples=10):
+    indices = np.where(clusters == cluster_number)[0][:num_samples]
+    fig, axes = plt.subplots(1, num_samples, figsize=(10, 2))
+    for i, idx in enumerate(indices):
+        axes[i].imshow(X[idx].reshape(28, 28), cmap="gray")  # Reshape back to 28x28 images
+        axes[i].axis("off")
+    plt.suptitle(f"Cluster {cluster_number}")
+    plt.show()
+
+# Plot 5 clusters
+for i in range(5):
+    plot_cluster_images(i)
+
+print("Clustering completed successfully!")
+
+
+
+
+b7
+Build a Python 
+
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+# Load Iris dataset
+iris = load_iris()
+X = iris.data[:, 2:4]  # Use only petal length and width for simplicity
+y = iris.target
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Test different values of K
+k_values = range(1, 11)
+accuracies = []
+
+for k in k_values:
+    model = KNeighborsClassifier(n_neighbors=k)
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    accuracies.append(acc)
+    print(f"K={k} → Accuracy: {acc:.2f}")
+
+# Plot accuracy vs K
+plt.plot(k_values, accuracies, marker='o')
+plt.title("KNN Accuracy for Different K Values")
+plt.xlabel("Number of Neighbors (K)")
+plt.ylabel("Accuracy")
+plt.grid(True)
+plt.show()
+
+
+
+
+
+b6
+Use non-parametric
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.neighbors import KernelDensity, KNeighborsClassifier
+
+
+
+def generate_shape(shape, size=64):
+    img = np.zeros((size, size), dtype=np.uint8)
+    center = (size // 2, size // 2)
+    if shape == "circle":
+        cv2.circle(img, center, size // 3, 255, -1)
+    elif shape == "square":
+        cv2.rectangle(img, (size//4, size//4), (3*size//4, 3*size//4), 255, -1)
+    elif shape == "triangle":
+        pts = np.array([[size//2, size//5], [size//5, 4*size//5], [4*size//5, 4*size//5]], np.int32)
+        cv2.fillPoly(img, [pts], 255)
+    return img
+
+
+
+
+def create_dataset(num_samples=100):
+    shapes = ["circle", "square", "triangle"]
+    X, y = [], []
+    for i, shape in enumerate (shapes):
+        for _ in range(num_samples):
+            img = generate_shape(shape)
+            X.append(img.flatten())
+            y.append(i)
+    return np.array (X), np.array(y)
+
+print("Generating dataset...")
+X, y = create_dataset (300)
+
+
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+
+
+parzen_kde = []
+bandwidth = 0.1 # You can tune this
+for i in range(3): # One KDE per class
+    kde = KernelDensity (kernel="gaussian", bandwidth=bandwidth)
+    kde.fit(X_train[y_train== 1])
+    parzen_kde.append(kde)
+
+
+
+
+def parzen_predict(X):
+    scores = np.array([kde.score_samples (X) for kde in parzen_kde]).T
+    return np.argmax(scores, axis=1)
+
+y_pred_parzen = parzen_predict(X_test)
+parzen_acc = accuracy_score(y_test, y_pred_parzen)
+
+
+
+
+
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+y_pred_knn = knn.predict(X_test)
+knn_acc = accuracy_score(y_test, y_pred_knn)
+
+
+
+
+
+print(f"Parzen-window Accuracy: {parzen_acc:.2f}")
+print(f"k-NN Accuracy: {knn_acc:.2f}")
+
+
+
+
+
+fig, axes = plt.subplots (1, 5, figsize=(10, 2))
+for i in range(5):
+    axes[i].imshow(X_test[i].reshape (64, 64), cmap="gray")
+    axes[i].set_title(f"Pred: {y_pred_parzen[i]}")
+    axes[i].axis("off")
+    plt.tight_layout()
+plt.show()
+
+
+

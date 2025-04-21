@@ -1,0 +1,85 @@
+a2
+Develop a text 
+
+
+
+# Step 1: Import necessary libraries
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score,confusion_matrix
+
+
+
+
+
+# Step 2: Load the dataset
+
+data = fetch_20newsgroups(subset='all')
+X = data.data
+y = data.target
+
+
+
+
+# Step 3: Split into training and testing sets
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42)
+
+
+
+
+
+# Step 4: Create a pipeline (Vectorizer + Classifier)
+
+model = make_pipeline(TfidfVectorizer(), MultinomialNB())
+
+
+
+
+
+# Step 5: Train the model
+
+model.fit(X_train, y_train)
+
+
+
+
+
+# Step 6: Make predictions on the test data
+
+y_pred = model.predict(X_test)
+
+
+
+
+
+# Step 7: Evaluate the model
+
+print('Accuracy: ', accuracy_score(y_test, y_pred))
+print("Classification Report; ", classification_report(y_test, y_pred, target_names=data.target_names))
+
+
+
+
+
+
+
+conf_matrix = confusion_matrix(y_test, y_pred)
+
+# Step 8: Plot confusion matrix
+plt.figure(figsize=(12, 10))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues',
+            xticklabels=data.target_names, yticklabels=data.target_names)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Category")
+plt.ylabel("Actual Category")
+plt.xticks(rotation=90)
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
